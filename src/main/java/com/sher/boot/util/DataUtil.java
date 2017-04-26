@@ -25,6 +25,7 @@ public class DataUtil {
 
     public static void main(String args[]){
         System.out.println(todayAndltCurr(1493119856518L));
+//        random(0);
     }
 
 }

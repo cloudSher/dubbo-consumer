@@ -47,5 +47,6 @@ public class Message {
         this.clk_factor = clk_factor;
         this.cc_factor = cc_factor;
         this.time_factor = time_factor;
+        this.time_cycle = time_cycle;
     }
 }

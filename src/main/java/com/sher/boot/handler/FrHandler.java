@@ -6,9 +6,7 @@ import com.sher.boot.domain.Message;
 import com.sher.boot.util.DataUtil;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by wei.zhao on 2017/4/25.
@@ -21,13 +19,14 @@ public class FrHandler {
         int num = setting.getNum();
         List<Message> msgs = new ArrayList<>(num);
         for(int i = 0; i < num; i++){
-            msgs.add(new Message(UUID.randomUUID().toString(), DataUtil.random(setting.getXps()),DataUtil.random(setting.getClk()),
-                    DataUtil.random(setting.getCc()),DataUtil.todayAndltCurr(System.currentTimeMillis()),
+            msgs.add(new Message((i+1)+"", setting.getXps(),setting.getClk(), setting.getCc(),DataUtil.todayAndltCurr(System.currentTimeMillis()),
                     setting.getXps_max(),setting.getClk_max(),setting.getCc_max(),setting.getTime_cycle(),setting.getXps_factor()
             ,setting.getClk_factor(),setting.getCc_factor(),setting.getTime_factor()));
         }
 
         score(msgs);
+
+        sort(msgs);
 
         JSONArray array = new JSONArray(msgs.size());
         array.addAll(msgs);
@@ -60,8 +59,6 @@ public class FrHandler {
     }
 
 
-
-
     /**
      * 特征数据衰减函数
      * @param feature  特征值
@@ -73,7 +70,7 @@ public class FrHandler {
         if(feature <= max){
             return Math.log(feature);
         }else{
-            return Math.log(feature/Math.sqrt(feature - max + 1));
+            return Math.log(max/Math.sqrt(feature - max + 1));
         }
     }
 
@@ -87,5 +84,14 @@ public class FrHandler {
         long t = time == 0 ? 1 : time;
         double tv =  Math.log(cycle / Math.sqrt(t));
         return tv;
+    }
+
+    public static void sort(List<Message> msgs){
+        Collections.sort(msgs, new Comparator<Message>() {
+            @Override
+            public int compare(Message o1, Message o2) {
+                return Double.compare(o2.getScore(),o1.getScore());
+            }
+        });
     }
 }
